@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "416622257194",
+    "firebase_url": "https://augmented-card-282504.firebaseio.com",
+    "project_id": "augmented-card-282504",
+    "storage_bucket": "augmented-card-282504.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:416622257194:android:b22c0f6dbc8e7f599b8f53",
+        "android_client_info": {
+          "package_name": "com.firedup.adobefirebasetaskreminder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "416622257194-jtglrsbrq6ds8psg5f28jetb12ks7kpd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnbQw-jt47qgMlkJCrPbMgrc-DA0-lY2w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "416622257194-jtglrsbrq6ds8psg5f28jetb12ks7kpd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
