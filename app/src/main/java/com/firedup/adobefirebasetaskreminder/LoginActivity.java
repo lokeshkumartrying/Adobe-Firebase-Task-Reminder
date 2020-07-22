@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -25,6 +27,8 @@ public class LoginActivity extends AppCompatActivity {
     List<AuthUI.IdpConfig> providers;
     final int RC_SIGN_IN=12;
     FirebaseUser currentUser;
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.P)
     @Override

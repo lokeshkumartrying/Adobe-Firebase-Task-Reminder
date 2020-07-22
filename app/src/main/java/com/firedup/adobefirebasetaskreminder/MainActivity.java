@@ -26,6 +26,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView ourdoes;
     ArrayList<MyDoes> list;
     DoesAdapter doesAdapter;
-    Button btnAddNew;
+    Button btnAddNew,btnSignOut;
     final String CHANNEL_ID="com.firedup.adobefirebasetaskreminder.ANDROID";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         subtitle_page = findViewById(R.id.subtitlepage);
         end_page = findViewById(R.id.endpage);
         btnAddNew = findViewById(R.id.btnAddNew);
-
+        btnSignOut = findViewById(R.id.btnSignOut);
         Typeface MLight = Typeface.createFromAsset(getAssets(), "fonts/ML.ttf");
         Typeface MMedium = Typeface.createFromAsset(getAssets(), "fonts/MM.ttf");
 
@@ -98,6 +101,21 @@ public class MainActivity extends AppCompatActivity {
 
                 notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
                 startActivity(a);
+            }
+        });
+        btnSignOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AuthUI.getInstance()
+                        .signOut(MainActivity.this)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            public void onComplete(@NonNull Task<Void> task) {
+                                // ...
+                               Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+                               startActivity(intent);
+                            }
+                        });
+
             }
         });
         ourdoes = findViewById(R.id.ourdoes);
