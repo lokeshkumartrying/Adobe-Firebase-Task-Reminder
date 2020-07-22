@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                 // Setting the notification methods for different behaviours
-
+//notification
                 PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.this, 0 /* Request code */, a,
                         PendingIntent.FLAG_ONE_SHOT);
                 NotificationCompat.Builder notificationBuilder =
