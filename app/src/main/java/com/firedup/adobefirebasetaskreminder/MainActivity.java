@@ -1,12 +1,21 @@
 package com.firedup.adobefirebasetaskreminder;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,8 +25,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,7 +33,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import static android.app.NotificationChannel.DEFAULT_CHANNEL_ID;
+
 
 public class MainActivity extends AppCompatActivity {
     TextView title_page, subtitle_page, end_page;
@@ -34,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<MyDoes> list;
     DoesAdapter doesAdapter;
     Button btnAddNew;
+    final String CHANNEL_ID="com.firedup.adobefirebasetaskreminder.ANDROID";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,11 +62,41 @@ public class MainActivity extends AppCompatActivity {
        subtitle_page.setTypeface(MLight);
        end_page.setTypeface(MLight);
         btnAddNew.setTypeface(MLight);
-
+    final String CHANNEL_ID = "com.firedup.adobefirebasetaskreminder";
         btnAddNew.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
                 Intent a = new Intent(MainActivity.this,NewTaskAct.class);
+                a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                // Setting the notification methods for different behaviours
+
+                PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.this, 0 /* Request code */, a,
+                        PendingIntent.FLAG_ONE_SHOT);
+                NotificationCompat.Builder notificationBuilder =
+                        new NotificationCompat.Builder(MainActivity.this, CHANNEL_ID)
+                                .setSmallIcon(R.drawable.ic_baseline_notifications_24)
+                                .setContentTitle("Reminder")
+                                .setContentText("You are creating a new activity")
+                                .setAutoCancel(true)
+                                .setPriority(NotificationManager.IMPORTANCE_MAX)
+                                .setFullScreenIntent(pendingIntent, true)
+                                .setSound(defaultSoundUri)
+                                .setContentIntent(pendingIntent);
+
+                NotificationManager notificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+                // Since android Oreo notification channel is needed.
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
+                            "Channel human readable title",
+                            NotificationManager.IMPORTANCE_DEFAULT);
+                    notificationManager.createNotificationChannel(channel);
+                }
+
+                notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
                 startActivity(a);
             }
         });
@@ -125,5 +166,37 @@ public class MainActivity extends AppCompatActivity {
 //
 //            }
 //        };
+
     }
+//    private void addNotification(Intent intent) {
+//
+//        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//        // Setting the notification methods for different behaviours
+//
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+//                PendingIntent.FLAG_ONE_SHOT);
+//        NotificationCompat.Builder notificationBuilder =
+//                new NotificationCompat.Builder(this, DEFAULT_CHANNEL_ID)
+//                        .setSmallIcon(R.drawable.ic_baseline_notifications_24)
+//                        .setContentTitle("Reminder")
+//                        .setContentText("You are creating a new activity")
+//                        .setAutoCancel(true)
+//                        .setPriority(NotificationManager.IMPORTANCE_MAX)
+//                        .setFullScreenIntent(pendingIntent, true)
+//                        .setSound(defaultSoundUri)
+//                        .setContentIntent(pendingIntent);
+//
+//        NotificationManager notificationManager =
+//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//
+//        // Since android Oreo notification channel is needed.
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            NotificationChannel channel = new NotificationChannel(DEFAULT_CHANNEL_ID,
+//                    "Channel human readable title",
+//                    NotificationManager.IMPORTANCE_DEFAULT);
+//            notificationManager.createNotificationChannel(channel);
+//        }
+//
+//        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+//    }
 }

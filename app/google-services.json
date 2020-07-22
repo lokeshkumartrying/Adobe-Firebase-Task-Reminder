@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "416622257194-npsq07dfkaltdm2g2bp2lkvf829rufgj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.firedup.adobefirebasetaskreminder",
+            "certificate_hash": "ea8ef909c634af6b67d8dfbaa16ab697ded853ac"
+          }
+        },
+        {
           "client_id": "416622257194-jtglrsbrq6ds8psg5f28jetb12ks7kpd.apps.googleusercontent.com",
           "client_type": 3
         }
