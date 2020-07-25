@@ -8,7 +8,8 @@
 android:layout_marginLeft="16dp"
 android:orientation="vertical"
 android:layout_width="220dp"
-android:layout_height="wrap_content">
+android:layout_height="wrap_content"
+    android:layout_marginBottom="20dp">
 
 <TextView
     android:id="@+id/titledoes"
@@ -31,9 +32,11 @@ android:layout_height="wrap_content">
 </LinearLayout>
 
 <LinearLayout
-android:layout_marginTop="30dp"
 android:layout_width="125dp"
-android:layout_height="wrap_content">
+android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginRight="20dp"
+    android:layout_marginTop="10dp">
 
 <TextView
     android:id="@+id/datedoes"
@@ -44,6 +47,15 @@ android:layout_height="wrap_content">
     android:gravity="right"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/timedoes"
+        android:textSize="18sp"
+        android:textColor="#F63EA5"
+        android:layout_marginTop="8dp"
+        android:text="Time"
+        android:gravity="right"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
     </LinearLayout>

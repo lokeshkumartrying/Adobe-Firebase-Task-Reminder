@@ -7,20 +7,21 @@ import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
+;
 import android.view.View;
-import android.view.ViewGroup;
+
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,9 +36,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import static android.app.NotificationChannel.DEFAULT_CHANNEL_ID;
+import java.util.Date;
+
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -47,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<MyDoes> list;
     DoesAdapter doesAdapter;
     Button btnAddNew,btnSignOut;
+    Intent intent;
+    PendingIntent pendingIntent;
+    AlarmManager  alarmManager;
     final String CHANNEL_ID="com.firedup.adobefirebasetaskreminder.ANDROID";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         end_page = findViewById(R.id.endpage);
         btnAddNew = findViewById(R.id.btnAddNew);
         btnSignOut = findViewById(R.id.btnSignOut);
+
         Typeface MLight = Typeface.createFromAsset(getAssets(), "fonts/ML.ttf");
         Typeface MMedium = Typeface.createFromAsset(getAssets(), "fonts/MM.ttf");
 
@@ -118,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
         ourdoes = findViewById(R.id.ourdoes);
 
         list = new ArrayList<MyDoes>();
@@ -128,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
 //                        .setQuery(reference, MyDoes.class)
 //                        .build();
         reference.addValueEventListener(new ValueEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -135,7 +146,48 @@ public class MainActivity extends AppCompatActivity {
                 for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
                 {
                     MyDoes p = dataSnapshot1.getValue(MyDoes.class);
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                    String currentDate = sdf.format(new Date());
+                    String inDate = (p.getDatedoes()+" "+p.getTimedoes());
 
+                    if (inDate.equals(currentDate)){
+                        Intent a = new Intent(MainActivity.this,EditTaskDesk.class);
+                        a.putExtra("titleDoes",p.titledoes);
+                        a.putExtra("descDoes",p.descdoes);
+                        a.putExtra("dateDoes",p.datedoes);
+                        a.putExtra("keyDoes",p.keydoes);
+                        a.putExtra("timeDoes",p.timedoes);
+                        a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                        // Setting the notification methods for different behaviours
+//notification
+                        PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.this, 0 /* Request code */, a,
+                                PendingIntent.FLAG_ONE_SHOT);
+                        NotificationCompat.Builder notificationBuilder =
+                                new NotificationCompat.Builder(MainActivity.this, CHANNEL_ID)
+                                        .setSmallIcon(R.drawable.ic_baseline_notifications_24)
+                                        .setContentTitle("Task")
+                                        .setContentText(p.getTitledoes()+" Task to be completed on: "+p.getDatedoes()+" by: "+p.getTimedoes())
+                                        .setAutoCancel(true)
+                                        .setPriority(NotificationManager.IMPORTANCE_MAX)
+                                        .setFullScreenIntent(pendingIntent, true)
+                                        .setSound(defaultSoundUri)
+                                        .setContentIntent(pendingIntent);
+
+                        NotificationManager notificationManager =
+                                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+                        // Since android Oreo notification channel is needed.
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
+                                    "Channel human readable title",
+                                    NotificationManager.IMPORTANCE_DEFAULT);
+                            notificationManager.createNotificationChannel(channel);
+                        }
+
+                        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+                        startActivity(a);
+                    }
                     list.add(p);
                 }
 
@@ -186,6 +238,26 @@ public class MainActivity extends AppCompatActivity {
 //        };
 
     }
+
+//    @RequiresApi(api = Build.VERSION_CODES.N)
+//    public void alert(String hour,String minute) {
+//       intent = new Intent(this, MyBroadcastReceiver.class);
+//        pendingIntent = PendingIntent.getBroadcast(
+//                this.getApplicationContext(), 280192, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+//
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.setTimeInMillis(System.currentTimeMillis());
+//        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+//        calendar.set(Calendar.MINUTE, Integer.parseInt(minute));
+//
+//        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+//
+//        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+//                AlarmManager.INTERVAL_HOUR, pendingIntent);
+//
+//        Toast.makeText(this, "Alarm will vibrate at time specified",
+//                Toast.LENGTH_SHORT).show();
+//    }
 //    private void addNotification(Intent intent) {
 //
 //        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -217,4 +289,11 @@ public class MainActivity extends AppCompatActivity {
 //
 //        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
 //    }
+protected void onStop() {
+    super.onStop();
+    if (alarmManager != null) {
+        alarmManager.cancel(pendingIntent);
+    }
+}
+
 }

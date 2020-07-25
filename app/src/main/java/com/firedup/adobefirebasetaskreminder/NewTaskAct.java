@@ -1,14 +1,18 @@
 package com.firedup.adobefirebasetaskreminder;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -20,7 +24,10 @@ import java.util.Random;
 
 public class NewTaskAct extends AppCompatActivity {
     TextView titlepage, addtitle, adddesc, adddate;
-    EditText titledoes, descdoes, datedoes;
+    EditText titledoes;
+    EditText descdoes;
+    DatePicker datedoes;
+    TimePicker timedoes;
     Button btnSaveTask, btnCancel;
     DatabaseReference reference;
     static Integer doesNum = new Random().nextInt();
@@ -39,6 +46,7 @@ public class NewTaskAct extends AppCompatActivity {
         titledoes = findViewById(R.id.titledoes);
         descdoes = findViewById(R.id.descdoes);
         datedoes = findViewById(R.id.datedoes);
+        timedoes = findViewById(R.id.timedoes);
 
         btnSaveTask = findViewById(R.id.btnSaveTask);
         btnCancel = findViewById(R.id.btnCancel);
@@ -50,12 +58,23 @@ public class NewTaskAct extends AppCompatActivity {
                 reference = FirebaseDatabase.getInstance().getReference().child("DoesApp").
                         child("Does" + (doesNum++));
                 reference.addValueEventListener(new ValueEventListener() {
+
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
                         dataSnapshot.getRef().child("titledoes").setValue(titledoes.getText().toString());
                         dataSnapshot.getRef().child("descdoes").setValue(descdoes.getText().toString());
-                        dataSnapshot.getRef().child("datedoes").setValue(datedoes.getText().toString());
+                        String month;
+                        if(datedoes.getMonth()<9)
+                            month = "0"+(datedoes.getMonth()+1);
+                        else
+                            month = ""+(datedoes.getMonth()+1);
+                        dataSnapshot.getRef().child("datedoes").setValue(datedoes.getYear()+"-"+month+"-"+datedoes.getDayOfMonth());
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            String hour = (timedoes.getHour()<10)?("0"+timedoes.getHour()):(""+timedoes.getHour());
+                            String minute = (timedoes.getMinute()<10)?("0"+timedoes.getMinute()):(""+timedoes.getMinute());
+                            dataSnapshot.getRef().child("timedoes").setValue(hour+":"+minute);
+                        }
                         dataSnapshot.getRef().child("keydoes").setValue(keydoes);
 
                         Intent a = new Intent(NewTaskAct.this,MainActivity.class);
@@ -85,7 +104,7 @@ public class NewTaskAct extends AppCompatActivity {
         descdoes.setTypeface(MMedium);
 
         adddate.setTypeface(MLight);
-        datedoes.setTypeface(MMedium);
+//        datedoes.setTypeface(MMedium);
 
         btnSaveTask.setTypeface(MMedium);
         btnCancel.setTypeface(MLight);

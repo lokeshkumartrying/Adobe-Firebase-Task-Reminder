@@ -19,7 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class EditTaskDesk extends AppCompatActivity {
-    EditText titleDoes, descDoes, dateDoes;
+    EditText titleDoes, descDoes, dateDoes,timeDoes;
     Button btnSaveUpdate, btnDelete;
     DatabaseReference reference;
     @Override
@@ -30,6 +30,7 @@ public class EditTaskDesk extends AppCompatActivity {
         titleDoes = findViewById(R.id.titledoes);
         descDoes = findViewById(R.id.descdoes);
         dateDoes = findViewById(R.id.datedoes);
+        timeDoes = findViewById(R.id.timedoes);
         final String keykeyDoes= getIntent().getStringExtra("keyDoes");
         btnSaveUpdate = findViewById(R.id.btnSaveUpdate);
         btnDelete = findViewById(R.id.btnDelete);
@@ -37,6 +38,7 @@ public class EditTaskDesk extends AppCompatActivity {
         titleDoes.setText(getIntent().getStringExtra("titleDoes"));
         descDoes.setText(getIntent().getStringExtra("descDoes"));
         dateDoes.setText(getIntent().getStringExtra("dateDoes"));
+        timeDoes.setText(getIntent().getStringExtra("timeDoes"));
         reference = FirebaseDatabase.getInstance().getReference().child("DoesApp").
                 child("Does" + keykeyDoes);
         btnSaveUpdate.setOnClickListener(new View.OnClickListener() {
@@ -50,6 +52,7 @@ public class EditTaskDesk extends AppCompatActivity {
                         dataSnapshot.getRef().child("titledoes").setValue(titleDoes.getText().toString());
                         dataSnapshot.getRef().child("descdoes").setValue(descDoes.getText().toString());
                         dataSnapshot.getRef().child("datedoes").setValue(dateDoes.getText().toString());
+                        dataSnapshot.getRef().child("timedoes").setValue(timeDoes.getText().toString());
                         dataSnapshot.getRef().child("keydoes").setValue(keykeyDoes);
 
                         Intent a = new Intent(EditTaskDesk.this,MainActivity.class);
