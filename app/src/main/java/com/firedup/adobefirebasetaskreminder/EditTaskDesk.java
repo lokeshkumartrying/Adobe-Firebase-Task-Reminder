@@ -38,7 +38,8 @@ public class EditTaskDesk extends AppCompatActivity {
         titleDoes.setText(getIntent().getStringExtra("titleDoes"));
         descDoes.setText(getIntent().getStringExtra("descDoes"));
         dateDoes.setText(getIntent().getStringExtra("dateDoes"));
-        timeDoes.setText(getIntent().getStringExtra("timeDoes"));
+        final String oldtimedoes = getIntent().getStringExtra("timeDoes");
+        timeDoes.setText(oldtimedoes);
         reference = FirebaseDatabase.getInstance().getReference().child("DoesApp").
                 child("Does" + keykeyDoes);
         btnSaveUpdate.setOnClickListener(new View.OnClickListener() {
@@ -52,11 +53,16 @@ public class EditTaskDesk extends AppCompatActivity {
                         dataSnapshot.getRef().child("titledoes").setValue(titleDoes.getText().toString());
                         dataSnapshot.getRef().child("descdoes").setValue(descDoes.getText().toString());
                         dataSnapshot.getRef().child("datedoes").setValue(dateDoes.getText().toString());
-                        dataSnapshot.getRef().child("timedoes").setValue(timeDoes.getText().toString());
                         dataSnapshot.getRef().child("keydoes").setValue(keykeyDoes);
+                        if(oldtimedoes.equals(timeDoes.getText().toString())){
+                            Toast.makeText(EditTaskDesk.this, "Enter a different time", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {dataSnapshot.getRef().child("timedoes").setValue(timeDoes.getText().toString());
+
 
                         Intent a = new Intent(EditTaskDesk.this,MainActivity.class);
-                        startActivity(a);
+                        startActivity(a);}
 
                     }
 

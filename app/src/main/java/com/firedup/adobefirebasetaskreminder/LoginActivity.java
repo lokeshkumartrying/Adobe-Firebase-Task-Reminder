@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
@@ -40,11 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         //Current FireBase user.
         currentUser =mAuth.getCurrentUser();
         //List of providers for authentication
-        providers = Arrays.asList(
-                new AuthUI.IdpConfig.EmailBuilder().build(),
-                new AuthUI.IdpConfig.PhoneBuilder().build(),
-                new AuthUI.IdpConfig.GoogleBuilder().build()
-        );
+        providers = Collections.singletonList(new AuthUI.IdpConfig.EmailBuilder().build());
         checkUser();
 
 //Listener for authentication changes

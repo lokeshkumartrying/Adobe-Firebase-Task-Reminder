@@ -5,7 +5,24 @@ public class MyDoes {
     String datedoes;
     String descdoes;
     String timedoes;
+    String email;
 
+    public MyDoes(String titledoes, String datedoes, String descdoes, String timedoes, String email, String keydoes) {
+        this.titledoes = titledoes;
+        this.datedoes = datedoes;
+        this.descdoes = descdoes;
+        this.timedoes = timedoes;
+        this.email = email;
+        this.keydoes = keydoes;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public MyDoes(String titledoes, String datedoes, String descdoes, String timedoes, String keydoes) {
         this.titledoes = titledoes;

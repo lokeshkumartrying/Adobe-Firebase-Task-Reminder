@@ -30,6 +30,8 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -65,7 +67,8 @@ public class MainActivity extends AppCompatActivity {
         end_page = findViewById(R.id.endpage);
         btnAddNew = findViewById(R.id.btnAddNew);
         btnSignOut = findViewById(R.id.btnSignOut);
-
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final String email = user.getEmail();
         Typeface MLight = Typeface.createFromAsset(getAssets(), "fonts/ML.ttf");
         Typeface MMedium = Typeface.createFromAsset(getAssets(), "fonts/MM.ttf");
 
@@ -80,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent a = new Intent(MainActivity.this,NewTaskAct.class);
+                a.putExtra("email_id",email);
                 a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                 // Setting the notification methods for different behaviours
@@ -146,49 +150,51 @@ public class MainActivity extends AppCompatActivity {
                 for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
                 {
                     MyDoes p = dataSnapshot1.getValue(MyDoes.class);
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                    String currentDate = sdf.format(new Date());
-                    String inDate = (p.getDatedoes()+" "+p.getTimedoes());
+                    if ((p != null) && (p.email.equals(email))) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                        String currentDate = sdf.format(new Date());
+                        String inDate = (p.getDatedoes() + " " + p.getTimedoes());
 
-                    if (inDate.equals(currentDate)){
-                        Intent a = new Intent(MainActivity.this,EditTaskDesk.class);
-                        a.putExtra("titleDoes",p.titledoes);
-                        a.putExtra("descDoes",p.descdoes);
-                        a.putExtra("dateDoes",p.datedoes);
-                        a.putExtra("keyDoes",p.keydoes);
-                        a.putExtra("timeDoes",p.timedoes);
-                        a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                        // Setting the notification methods for different behaviours
-//notification
-                        PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.this, 0 /* Request code */, a,
-                                PendingIntent.FLAG_ONE_SHOT);
-                        NotificationCompat.Builder notificationBuilder =
-                                new NotificationCompat.Builder(MainActivity.this, CHANNEL_ID)
-                                        .setSmallIcon(R.drawable.ic_baseline_notifications_24)
-                                        .setContentTitle("Task")
-                                        .setContentText(p.getTitledoes()+" Task to be completed on: "+p.getDatedoes()+" by: "+p.getTimedoes())
-                                        .setAutoCancel(true)
-                                        .setPriority(NotificationManager.IMPORTANCE_MAX)
-                                        .setFullScreenIntent(pendingIntent, true)
-                                        .setSound(defaultSoundUri)
-                                        .setContentIntent(pendingIntent);
+                        if (inDate.equals(currentDate)) {
+                            Intent a = new Intent(MainActivity.this, EditTaskDesk.class);
+                            a.putExtra("titleDoes", p.titledoes);
+                            a.putExtra("descDoes", p.descdoes);
+                            a.putExtra("dateDoes", p.datedoes);
+                            a.putExtra("keyDoes", p.keydoes);
+                            a.putExtra("timeDoes", p.timedoes);
+                            a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                            // Setting the notification methods for different behaviours
+                            //notification
+                            PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.this, 0 /* Request code */, a,
+                                    PendingIntent.FLAG_ONE_SHOT);
+                            NotificationCompat.Builder notificationBuilder =
+                                    new NotificationCompat.Builder(MainActivity.this, CHANNEL_ID)
+                                            .setSmallIcon(R.drawable.ic_baseline_notifications_24)
+                                            .setContentTitle("Task")
+                                            .setContentText(p.getTitledoes() + " Task to be completed on: " + p.getDatedoes() + " by: " + p.getTimedoes())
+                                            .setAutoCancel(true)
+                                            .setPriority(NotificationManager.IMPORTANCE_MAX)
+                                            .setFullScreenIntent(pendingIntent, true)
+                                            .setSound(defaultSoundUri)
+                                            .setContentIntent(pendingIntent);
 
-                        NotificationManager notificationManager =
-                                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                            NotificationManager notificationManager =
+                                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-                        // Since android Oreo notification channel is needed.
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
-                                    "Channel human readable title",
-                                    NotificationManager.IMPORTANCE_DEFAULT);
-                            notificationManager.createNotificationChannel(channel);
+                            // Since android Oreo notification channel is needed.
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
+                                        "Channel human readable title",
+                                        NotificationManager.IMPORTANCE_DEFAULT);
+                                notificationManager.createNotificationChannel(channel);
+                            }
+
+                            notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+                            startActivity(a);
                         }
-
-                        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
-                        startActivity(a);
+                        list.add(p);
                     }
-                    list.add(p);
                 }
 
                 LinearLayoutManager llm = new LinearLayoutManager(MainActivity.this);

@@ -76,6 +76,7 @@ public class NewTaskAct extends AppCompatActivity {
                             dataSnapshot.getRef().child("timedoes").setValue(hour+":"+minute);
                         }
                         dataSnapshot.getRef().child("keydoes").setValue(keydoes);
+                        dataSnapshot.getRef().child("email").setValue(getIntent().getStringExtra("email_id"));
 
                         Intent a = new Intent(NewTaskAct.this,MainActivity.class);
                         startActivity(a);
