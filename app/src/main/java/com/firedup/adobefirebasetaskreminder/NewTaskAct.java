@@ -105,7 +105,7 @@ public class NewTaskAct extends AppCompatActivity {
         descdoes.setTypeface(MMedium);
 
         adddate.setTypeface(MLight);
-//        datedoes.setTypeface(MMedium);
+
 
         btnSaveTask.setTypeface(MMedium);
         btnCancel.setTypeface(MLight);
