@@ -19,7 +19,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-;
+
 import android.view.View;
 
 import android.widget.Button;
@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                                 // ...
                                Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+                               MainActivity.this.finish();
                                startActivity(intent);
                             }
                         });
